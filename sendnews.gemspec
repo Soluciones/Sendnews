@@ -7,11 +7,11 @@ require "sendnews/version"
 Gem::Specification.new do |s|
   s.name        = "sendnews"
   s.version     = Sendnews::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Sendnews."
-  s.description = "TODO: Description of Sendnews."
+  s.authors     = ["Rankia"]
+  s.email       = ["rails@rankia.com"]
+  s.homepage    = "https://github.com/Soluciones/Sendnews"
+  s.summary     = "An engine to send newsletters"
+  s.description = s.summary
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
