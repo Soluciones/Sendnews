@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "railties", "~> 3.1.12"
   s.add_dependency "tzinfo"
 
+  s.add_dependency "gatling_gun"
   # s.add_dependency "jquery-rails"
 
   s.add_development_dependency "rspec-rails"

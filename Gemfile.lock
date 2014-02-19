@@ -6,6 +6,7 @@ PATH
       actionpack (~> 3.1.12)
       activeresource (~> 3.1.12)
       activesupport (~> 3.1.12)
+      gatling_gun
       railties (~> 3.1.12)
       tzinfo
 
@@ -39,6 +40,7 @@ GEM
     diff-lcs (1.2.5)
     erubis (2.7.0)
     ffaker (1.23.0)
+    gatling_gun (0.0.3)
     hike (1.2.3)
     i18n (0.6.9)
     jquery-rails (3.1.0)
