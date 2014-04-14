@@ -36,9 +36,10 @@ module NewsletterSender
 
   def enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones = {})
     opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
+    opciones[:identidad] ||= IDENTIDAD_REMITENTE_NEWSLETTERS
     opciones[:nombre_newsletter] ||= genera_nombre_newsletter
 
-    opciones[:sendgrid].add_newsletter(opciones[:nombre_newsletter], identity: IDENTIDAD_REMITENTE_NEWSLETTERS, subject: asunto, html: contenido)
+    opciones[:sendgrid].add_newsletter(opciones[:nombre_newsletter], identity: opciones[:identidad], subject: asunto, html: contenido)
 
     MAX_INTENTOS_API_SENDGRID.times do
       respuesta = opciones[:sendgrid].add_recipients(opciones[:nombre_newsletter], nombre_lista)
