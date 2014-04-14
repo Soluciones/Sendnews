@@ -17,34 +17,37 @@ module NewsletterSender
   end
 
   def enviar_newsletter_a_suscriptores_tematica(tematica, asunto, contenido, opciones = {})
+    opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
     nombre_lista = dame_nombre_lista_suscribible(tematica)
 
-    preparar_lista_para_newsletter(nombre_lista, tematica.suscripciones) unless SENDGRID_NEWSLETTERS.get_list(nombre_lista).success?
+    preparar_lista_para_newsletter(nombre_lista, tematica.suscripciones, opciones[:sendgrid]) unless opciones[:sendgrid].get_list(nombre_lista).success?
 
     enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
   end
 
   def enviar_newsletter_a_destinatarios(destinatarios, asunto, contenido, opciones = {})
+    opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
     opciones[:nombre_newsletter] ||= genera_nombre_newsletter
     nombre_lista = dame_nombre_lista_newsletter(opciones[:nombre_newsletter])
 
-    preparar_lista_para_newsletter(nombre_lista, destinatarios)
+    preparar_lista_para_newsletter(nombre_lista, destinatarios, opciones[:sendgrid])
     enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
   end
 
   def enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones = {})
+    opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
     opciones[:nombre_newsletter] ||= genera_nombre_newsletter
 
-    SENDGRID_NEWSLETTERS.add_newsletter(opciones[:nombre_newsletter], identity: IDENTIDAD_REMITENTE_NEWSLETTERS, subject: asunto, html: contenido)
+    opciones[:sendgrid].add_newsletter(opciones[:nombre_newsletter], identity: IDENTIDAD_REMITENTE_NEWSLETTERS, subject: asunto, html: contenido)
 
     MAX_INTENTOS_API_SENDGRID.times do
-      respuesta = SENDGRID_NEWSLETTERS.add_recipients(opciones[:nombre_newsletter], nombre_lista)
+      respuesta = opciones[:sendgrid].add_recipients(opciones[:nombre_newsletter], nombre_lista)
       break if respuesta['error'].blank?
       sleep ESPERA_ENTRE_INTENTOS_API_SENDGRID
     end
 
     opciones_envio = opciones[:momento_envio] ? { at: opciones[:momento_envio] } : {}
-    SENDGRID_NEWSLETTERS.add_schedule(opciones[:nombre_newsletter], opciones_envio)
+    opciones[:sendgrid].add_schedule(opciones[:nombre_newsletter], opciones_envio)
   end
 
 private
@@ -67,10 +70,10 @@ private
     "#{suscribible.nombre} (#{suscribible.class.model_name} id: #{suscribible.id})"
   end
 
-  def preparar_lista_para_newsletter(nombre_lista, destinatarios)
-    SENDGRID_NEWSLETTERS.add_list(nombre_lista)
+  def preparar_lista_para_newsletter(nombre_lista, destinatarios, sendgrid)
+    sendgrid.add_list(nombre_lista)
 
-    llenar_lista_destinatarios(nombre_lista, destinatarios, SENDGRID_NEWSLETTERS)
+    llenar_lista_destinatarios(nombre_lista, destinatarios, opciones[:sendgrid])
   end
 
   def llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
