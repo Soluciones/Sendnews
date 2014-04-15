@@ -3,8 +3,8 @@
 require "spec_helper"
 require "gatling_gun"
 
-describe NewsletterSender do
-  include NewsletterSender
+describe Sendnews::NewsletterSender do
+  include Sendnews::NewsletterSender
 
   SENDGRID_NEWSLETTERS = GatlingGun.new('fake_user', 'fake_password')
   IDENTIDAD_REMITENTE_NEWSLETTERS = 'fake_identity'
@@ -29,7 +29,7 @@ describe NewsletterSender do
     GatlingGun.any_instance.stub(:get_list).and_return(GatlingGun::Response.new({}))
 
     # Hacemos stub de NewsletterSender::ESPERA_ENTRE_INTENTOS_API_SENDGRID para evitar ralentizar el test
-    stub_const('NewsletterSender::ESPERA_ENTRE_INTENTOS_API_SENDGRID', 0)
+    stub_const('Sendnews::NewsletterSender::ESPERA_ENTRE_INTENTOS_API_SENDGRID', 0)
   end
 
   shared_examples_for "hace de adaptador hacia #enviar_newsletter_a_destinatarios" do
@@ -159,7 +159,7 @@ describe NewsletterSender do
     end
 
     context "si SendGrid no tiene la lista disponible de inmediato" do
-      let(:n_intentos_fallidos) { Random.rand(1..(NewsletterSender::MAX_INTENTOS_API_SENDGRID - 1)) }
+      let(:n_intentos_fallidos) { Random.rand(1..(Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID - 1)) }
       let(:respuestas) { ([add_recipients_error_response] * n_intentos_fallidos) + [add_recipients_successful_response] }
 
       before { SENDGRID_NEWSLETTERS.stub(:add_recipients).and_return(*respuestas) }
@@ -173,8 +173,8 @@ describe NewsletterSender do
       context "si SendGrid falla continuamente" do
         before { SENDGRID_NEWSLETTERS.stub(:add_recipients).and_return(add_recipients_error_response) }
 
-        it "deja de intentarlo tras #{NewsletterSender::MAX_INTENTOS_API_SENDGRID} intentos" do
-          SENDGRID_NEWSLETTERS.should_receive(:add_recipients).at_most(NewsletterSender::MAX_INTENTOS_API_SENDGRID).times
+        it "deja de intentarlo tras #{Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID} intentos" do
+          SENDGRID_NEWSLETTERS.should_receive(:add_recipients).at_most(Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID).times
 
           enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
         end

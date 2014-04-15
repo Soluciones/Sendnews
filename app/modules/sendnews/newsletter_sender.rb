@@ -1,6 +1,6 @@
 # coding: UTF-8
 
-module NewsletterSender
+module Sendnews::NewsletterSender
 
   MAX_SENDGRID_RECIPIENTS = 1000
   MAX_INTENTOS_API_SENDGRID = 10
