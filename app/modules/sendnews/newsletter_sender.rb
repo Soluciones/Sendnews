@@ -74,7 +74,7 @@ private
   def preparar_lista_para_newsletter(nombre_lista, destinatarios, sendgrid)
     sendgrid.add_list(nombre_lista)
 
-    llenar_lista_destinatarios(nombre_lista, destinatarios, opciones[:sendgrid])
+    llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
   end
 
   def llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
