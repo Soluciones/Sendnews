@@ -1,3 +1,5 @@
 = Sendnews
 
+{<img src="https://magnum.travis-ci.com/Soluciones/Sendnews.svg?token=A3GAeprVqcZuZMWq6WuN&branch=adding-travis-and-hound" alt="Build Status" />}[https://magnum.travis-ci.com/Soluciones/Sendnews]
+
 This project rocks and uses MIT-LICENSE.
