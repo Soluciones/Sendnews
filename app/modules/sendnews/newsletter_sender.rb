@@ -8,18 +8,18 @@ module Sendnews::NewsletterSender
 
   def crear_y_cronificar_newsletter(destinatarios, asunto, contenido, opciones = {})
     tenemos_engine_suscribir = Object.const_defined?('Suscribir')
-    es_una_lista_de_suscripciones = destinatarios.first.respond_to?(:tematica)
+    es_una_lista_de_suscripciones = destinatarios.first.respond_to?(:suscribible)
     if tenemos_engine_suscribir && es_una_lista_de_suscripciones
-      enviar_newsletter_a_suscriptores_tematica(destinatarios.first.tematica, asunto, contenido, opciones)
+      enviar_newsletter_a_suscriptores_suscribible(destinatarios.first.suscribible, asunto, contenido, opciones)
     else
       enviar_newsletter_a_destinatarios(destinatarios, asunto, contenido, opciones)
     end
   end
 
-  def enviar_newsletter_a_suscriptores_tematica(tematica, asunto, contenido, opciones = {})
+  def enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones = {})
     opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
-    nombre_lista = dame_nombre_lista_suscribible(tematica)
-    suscripciones = tematica.suscripciones
+    nombre_lista = dame_nombre_lista_suscribible(suscribible)
+    suscripciones = suscribible.suscripciones
 
     lista_existe = opciones[:sendgrid].get_list(nombre_lista).success?
     preparar_lista_para_newsletter(nombre_lista, suscripciones, opciones[:sendgrid]) unless lista_existe
