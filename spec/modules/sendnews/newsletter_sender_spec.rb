@@ -17,7 +17,7 @@ describe Sendnews::NewsletterSender do
   let(:contenido) { Faker::Lorem.paragraph }
   let(:asunto) { Faker::Lorem.sentence }
   let(:opciones) { { dummy_key: 'dummy value' } }
-  let(:tematica) { FactoryGirl.build(:tematica) }
+  let(:suscribible) { FactoryGirl.build(:tematica) }
   let(:nombre_newsletter) { Faker::Lorem.sentence }
   let(:nombre_lista) { Faker::Lorem.sentence }
   let(:destinatarios) { FactoryGirl.build_list(:suscripcion, Random.rand(5..10)) }
@@ -47,7 +47,7 @@ describe Sendnews::NewsletterSender do
 
   describe "#crear_y_cronificar_newsletter" do
     context "pasándole como destinatarios una lista de suscripciones a temáticas" do
-      let(:destinatarios) { FactoryGirl.build_list(:suscripcion, Random.rand(5..10), tematica: tematica) }
+      let(:destinatarios) { FactoryGirl.build_list(:suscripcion, Random.rand(5..10), suscribible: suscribible) }
 
       before { Object.stub(:const_defined?).and_call_original }
 
@@ -60,8 +60,8 @@ describe Sendnews::NewsletterSender do
       context "con la gema suscribir disponible" do
         before { Object.stub(:const_defined?).with('Suscribir').and_return(true) }
 
-        it "hace de adaptador hacia #enviar_newsletter_a_suscriptores_tematica" do
-          subject.should_receive(:enviar_newsletter_a_suscriptores_tematica).with(tematica, asunto, contenido, opciones)
+        it "hace de adaptador hacia #enviar_newsletter_a_suscriptores_suscribible" do
+          subject.should_receive(:enviar_newsletter_a_suscriptores_suscribible).with(suscribible, asunto, contenido, opciones)
 
           subject.crear_y_cronificar_newsletter(destinatarios, asunto, contenido, opciones)
         end
@@ -73,15 +73,15 @@ describe Sendnews::NewsletterSender do
     end
   end
 
-  describe "#enviar_newsletter_a_suscriptores_tematica" do
-    let(:tematica) { FactoryGirl.build(:tematica, suscripciones: destinatarios) }
+  describe "#enviar_newsletter_a_suscriptores_suscribible" do
+    let(:suscribible) { FactoryGirl.build(:tematica, suscripciones: destinatarios) }
 
-    before { subject.should_receive(:dame_nombre_lista_suscribible).with(tematica).and_return(nombre_lista) } # stub no funciona para métodos privados
+    before { subject.should_receive(:dame_nombre_lista_suscribible).with(suscribible).and_return(nombre_lista) } # stub no funciona para métodos privados
 
     it "hace de adaptador hacia #enviar_newsletter_a_lista" do
       subject.should_receive(:enviar_newsletter_a_lista).with(nombre_lista, asunto, contenido, opciones)
 
-      subject.enviar_newsletter_a_suscriptores_tematica(tematica, asunto, contenido, opciones)
+      subject.enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones)
     end
 
     context "cuando la lista de suscriptores al suscribible no existe en SendGrid" do
@@ -90,7 +90,7 @@ describe Sendnews::NewsletterSender do
       it "prepara la lista" do
         subject.should_receive(:preparar_lista_para_newsletter)
 
-        subject.enviar_newsletter_a_suscriptores_tematica(tematica, asunto, contenido, opciones)
+        subject.enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones)
       end
     end
 
@@ -100,7 +100,7 @@ describe Sendnews::NewsletterSender do
       it "no prepara la lista" do
         subject.should_not_receive(:preparar_lista_para_newsletter)
 
-        subject.enviar_newsletter_a_suscriptores_tematica(tematica, asunto, contenido, opciones)
+        subject.enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones)
       end
     end
   end
