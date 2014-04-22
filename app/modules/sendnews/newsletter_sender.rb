@@ -19,10 +19,11 @@ module Sendnews::NewsletterSender
   def enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones = {})
     opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
     nombre_lista = dame_nombre_lista_suscribible(suscribible)
-    suscripciones = suscribible.suscripciones
 
     lista_existe = opciones[:sendgrid].get_list(nombre_lista).success?
-    preparar_lista_para_newsletter(nombre_lista, suscripciones, opciones[:sendgrid]) unless lista_existe
+    unless lista_existe
+      preparar_lista_para_newsletter(nombre_lista, suscribible.suscripciones_activas, opciones[:sendgrid])
+    end
 
     enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
   end

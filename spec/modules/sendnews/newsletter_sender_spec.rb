@@ -73,8 +73,8 @@ describe Sendnews::NewsletterSender do
     end
   end
 
-  describe "#enviar_newsletter_a_suscriptores_suscribible" do
-    let(:suscribible) { FactoryGirl.build(:tematica, suscripciones: destinatarios) }
+  describe "#enviar_newsletter_a_suscriptores_tematica" do
+    let(:suscribible) { FactoryGirl.build(:tematica, suscripciones_activas: destinatarios) }
 
     before { subject.should_receive(:dame_nombre_lista_suscribible).with(suscribible).and_return(nombre_lista) } # stub no funciona para métodos privados
 
