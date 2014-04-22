@@ -1,5 +1,5 @@
 # coding: UTF-8
 
 class Tematica
-  attr_accessor :nombre, :suscripciones
+  attr_accessor :nombre, :suscripciones_activas
 end

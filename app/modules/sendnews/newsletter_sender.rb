@@ -19,7 +19,7 @@ module Sendnews::NewsletterSender
   def enviar_newsletter_a_suscriptores_tematica(tematica, asunto, contenido, opciones = {})
     opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
     nombre_lista = dame_nombre_lista_suscribible(tematica)
-    suscripciones = tematica.suscripciones
+    suscripciones = tematica.suscripciones_activas
 
     lista_existe = opciones[:sendgrid].get_list(nombre_lista).success?
     preparar_lista_para_newsletter(nombre_lista, suscripciones, opciones[:sendgrid]) unless lista_existe
