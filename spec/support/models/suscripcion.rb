@@ -1,5 +1,5 @@
 # coding: UTF-8
 
 class Suscripcion
-  attr_accessor :tematica, :nombre_apellidos, :email
+  attr_accessor :suscribible, :nombre_apellidos, :email
 end
