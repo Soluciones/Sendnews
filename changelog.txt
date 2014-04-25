@@ -1,3 +1,4 @@
+[1.0.1] FIX: Using suscribible.nombre_lista instead of generating an inconsistent name
 [1.0.0] Added HoundCI.
         Code refactor.
         Using Suscribible#suscripciones_activas instead of Suscribible#suscripciones.
