@@ -18,7 +18,7 @@ module Sendnews::NewsletterSender
 
   def enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones = {})
     opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
-    nombre_lista = dame_nombre_lista_suscribible(suscribible)
+    nombre_lista = suscribible.nombre_lista
 
     lista_existe = opciones[:sendgrid].get_list(nombre_lista).success?
     unless lista_existe
@@ -66,12 +66,6 @@ private
 
   def dame_nombre_lista_newsletter(nombre_newsletter)
     "Destinatarios #{nombre_newsletter}"
-  end
-
-  def dame_nombre_lista_suscribible(suscribible)
-    # Esto está duplicado en el engine "suscribir". Debería ser un método Suscribible#nombre_lista.
-
-    "#{suscribible.nombre} (#{suscribible.class.model_name} id: #{suscribible.id})"
   end
 
   def preparar_lista_para_newsletter(nombre_lista, destinatarios, sendgrid)
