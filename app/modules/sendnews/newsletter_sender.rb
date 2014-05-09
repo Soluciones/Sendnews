@@ -77,7 +77,23 @@ private
   def llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
     destinatarios_formateados = formatear_destinatarios(destinatarios)
     destinatarios_formateados.each_slice(MAX_SENDGRID_RECIPIENTS) do |grupo|
-      sendgrid.add_emails(nombre_lista, grupo)
+      llenar_lista_con_grupo(nombre_lista, grupo, sendgrid)
+    end
+  end
+
+  def llenar_lista_con_grupo(nombre_lista, grupo, sendgrid)
+    respuesta = sendgrid.add_emails(nombre_lista, grupo)
+    es_un_destinatario_erroneo = (respuesta['error'].present? && grupo.length == 1)
+
+    if es_un_destinatario_erroneo
+      print "\r\n\nDestinatario erróneo (SendGrid dice: \"#{respuesta['error']}\"):\n#{grupo.first.inspect}\n\n"
+      return
+    end
+
+    return if respuesta['error'].blank?
+
+    grupo.each_slice(grupo.length / 2) do |subgrupo|
+      llenar_lista_con_grupo(nombre_lista, subgrupo, sendgrid)
     end
   end
 end
