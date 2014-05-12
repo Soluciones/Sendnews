@@ -21,8 +21,8 @@ describe Sendnews::NewsletterSender do
   let(:nombre_newsletter) { Faker::Lorem.sentence }
   let(:nombre_lista) { Faker::Lorem.sentence }
   let(:destinatarios) { FactoryGirl.build_list(:suscripcion, Random.rand(5..10)) }
-  let(:add_recipients_successful_response) { { 'inserted' => 1 } }
-  let(:add_recipients_error_response) { { 'error' => 'error message' } }
+  let(:generic_sucessful_response) { { message: 'success'} }
+  let(:generic_error_response) { { 'error' => 'error message' } }
 
   before(:each) do
     # Hacemos stub de todos los métodos para evitar llamadas reales a la API
@@ -156,14 +156,14 @@ describe Sendnews::NewsletterSender do
     it "añade la lista como destinatario de la newsletter" do
       subject.should_receive(:genera_nombre_newsletter).and_return(nombre_newsletter) # stub no funciona para métodos privados
 
-      SENDGRID_NEWSLETTERS.should_receive(:add_recipients).with(nombre_newsletter, nombre_lista).and_return(add_recipients_successful_response)
+      SENDGRID_NEWSLETTERS.should_receive(:add_recipients).with(nombre_newsletter, nombre_lista).and_return(generic_sucessful_response)
 
       subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
     end
 
     context "si SendGrid no tiene la lista disponible de inmediato" do
       let(:n_intentos_fallidos) { Random.rand(1..(Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID - 1)) }
-      let(:respuestas) { ([add_recipients_error_response] * n_intentos_fallidos) + [add_recipients_successful_response] }
+      let(:respuestas) { ([generic_error_response] * n_intentos_fallidos) + [generic_sucessful_response] }
 
       before { SENDGRID_NEWSLETTERS.stub(:add_recipients).and_return(*respuestas) }
 
@@ -174,7 +174,7 @@ describe Sendnews::NewsletterSender do
       end
 
       context "si SendGrid falla continuamente" do
-        before { SENDGRID_NEWSLETTERS.stub(:add_recipients).and_return(add_recipients_error_response) }
+        before { SENDGRID_NEWSLETTERS.stub(:add_recipients).and_return(generic_error_response) }
 
         it "deja de intentarlo tras #{Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID} intentos" do
           SENDGRID_NEWSLETTERS.should_receive(:add_recipients).at_most(Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID).times
