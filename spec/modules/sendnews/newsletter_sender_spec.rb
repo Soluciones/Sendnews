@@ -26,12 +26,12 @@ describe Sendnews::NewsletterSender do
 
   before(:each) do
     # Hacemos stub de todos los métodos para evitar llamadas reales a la API
-    GatlingGun.any_instance.stub(:add_list)
-    GatlingGun.any_instance.stub(:add_emails)
-    GatlingGun.any_instance.stub(:add_newsletter)
-    GatlingGun.any_instance.stub(:add_recipients).and_return(add_recipients_successful_response)
-    GatlingGun.any_instance.stub(:add_schedule)
-    GatlingGun.any_instance.stub(:get_list).and_return(GatlingGun::Response.new({}))
+    GatlingGun.any_instance.stub(add_list: generic_sucessful_response)
+    GatlingGun.any_instance.stub(add_emails: generic_sucessful_response)
+    GatlingGun.any_instance.stub(add_newsletter: generic_sucessful_response)
+    GatlingGun.any_instance.stub(add_recipients: generic_sucessful_response)
+    GatlingGun.any_instance.stub(add_schedule: generic_sucessful_response)
+    GatlingGun.any_instance.stub(get_list: double('Response', success?: true))
 
     # Hacemos stub de NewsletterSender::ESPERA_ENTRE_INTENTOS_API_SENDGRID para evitar ralentizar el test
     stub_const('Sendnews::NewsletterSender::ESPERA_ENTRE_INTENTOS_API_SENDGRID', 0)
@@ -124,6 +124,7 @@ describe Sendnews::NewsletterSender do
       SENDGRID_NEWSLETTERS.should_receive(:add_emails).with(nombre_lista, anything).at_least(:once) do |_, destinatarios_formateados|
         destinatarios_formateados.map{ |d| d[:email] }.should =~ destinatarios.map(&:email)
         destinatarios_formateados.map{ |d| d[:name] }.should =~ destinatarios.map(&:nombre_apellidos)
+        generic_sucessful_response
       end
 
       subject.enviar_newsletter_a_destinatarios(destinatarios, asunto, contenido, opciones)
