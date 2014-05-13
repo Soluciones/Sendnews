@@ -86,7 +86,7 @@ describe Sendnews::NewsletterSender do
       before { SENDGRID_NEWSLETTERS.stub(:get_list).with(nombre_lista).and_return(double('Response', success?: false)) }
 
       it "prepara la lista" do
-        subject.should_receive(:preparar_lista_para_newsletter)
+        subject.should_receive(:preparar_lista_destinatarios)
 
         subject.enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones)
       end
@@ -96,7 +96,7 @@ describe Sendnews::NewsletterSender do
       before { SENDGRID_NEWSLETTERS.stub(:get_list).with(nombre_lista).and_return(double('Response', success?: true)) }
 
       it "no prepara la lista" do
-        subject.should_not_receive(:preparar_lista_para_newsletter)
+        subject.should_not_receive(:preparar_lista_destinatarios)
 
         subject.enviar_newsletter_a_suscriptores_suscribible(suscribible, asunto, contenido, opciones)
       end

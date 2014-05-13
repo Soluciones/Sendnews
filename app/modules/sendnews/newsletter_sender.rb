@@ -22,7 +22,7 @@ module Sendnews::NewsletterSender
 
     lista_existe = opciones[:sendgrid].get_list(nombre_lista).success?
     unless lista_existe
-      preparar_lista_para_newsletter(nombre_lista, suscribible.suscripciones_activas, opciones[:sendgrid])
+      preparar_lista_destinatarios(nombre_lista, suscribible.suscripciones_activas, opciones[:sendgrid])
     end
 
     enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
@@ -33,7 +33,7 @@ module Sendnews::NewsletterSender
     opciones[:nombre_newsletter] ||= genera_nombre_newsletter
     nombre_lista = dame_nombre_lista_newsletter(opciones[:nombre_newsletter])
 
-    preparar_lista_para_newsletter(nombre_lista, destinatarios, opciones[:sendgrid])
+    preparar_lista_destinatarios(nombre_lista, destinatarios, opciones[:sendgrid])
     enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
   end
 
@@ -68,7 +68,7 @@ private
     "Destinatarios #{nombre_newsletter}"
   end
 
-  def preparar_lista_para_newsletter(nombre_lista, destinatarios, sendgrid)
+  def preparar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
     sendgrid.add_list(nombre_lista)
 
     llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
