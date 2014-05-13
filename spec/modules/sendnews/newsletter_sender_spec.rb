@@ -149,7 +149,11 @@ describe Sendnews::NewsletterSender do
     it "crea una newsletter con el nombre, contenido, asunto y remitente" do
       subject.should_receive(:genera_nombre_newsletter).and_return(nombre_newsletter) # stub no funciona para métodos privados
 
-      SENDGRID_NEWSLETTERS.should_receive(:add_newsletter).with(nombre_newsletter, hash_including(identity: IDENTIDAD_REMITENTE_NEWSLETTERS, subject: asunto, html: contenido))
+      SENDGRID_NEWSLETTERS.should_receive(:add_newsletter)
+                          .with(nombre_newsletter,
+                                hash_including(identity: IDENTIDAD_REMITENTE_NEWSLETTERS,
+                                               subject: asunto,
+                                               html: contenido))
 
       subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
     end
@@ -157,7 +161,9 @@ describe Sendnews::NewsletterSender do
     it "añade la lista como destinatario de la newsletter" do
       subject.should_receive(:genera_nombre_newsletter).and_return(nombre_newsletter) # stub no funciona para métodos privados
 
-      SENDGRID_NEWSLETTERS.should_receive(:add_recipients).with(nombre_newsletter, nombre_lista).and_return(generic_sucessful_response)
+      SENDGRID_NEWSLETTERS.should_receive(:add_recipients)
+                          .with(nombre_newsletter, nombre_lista)
+                          .and_return(generic_sucessful_response)
 
       subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
     end
@@ -178,7 +184,8 @@ describe Sendnews::NewsletterSender do
         before { SENDGRID_NEWSLETTERS.stub(:add_recipients).and_return(generic_error_response) }
 
         it "deja de intentarlo tras #{Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID} intentos" do
-          SENDGRID_NEWSLETTERS.should_receive(:add_recipients).at_most(Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID).times
+          SENDGRID_NEWSLETTERS.should_receive(:add_recipients)
+                              .at_most(Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID).times
 
           subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
         end
@@ -191,7 +198,8 @@ describe Sendnews::NewsletterSender do
       it "programa la newsletter para cuando se le ha pedido" do
         subject.should_receive(:genera_nombre_newsletter).and_return(nombre_newsletter) # stub no funciona para métodos privados
 
-        SENDGRID_NEWSLETTERS.should_receive(:add_schedule).with(nombre_newsletter, hash_including(at: opciones[:momento_envio]))
+        SENDGRID_NEWSLETTERS.should_receive(:add_schedule)
+                            .with(nombre_newsletter, hash_including(at: opciones[:momento_envio]))
 
         subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
       end
