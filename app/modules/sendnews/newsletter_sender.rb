@@ -86,7 +86,8 @@ private
     es_un_destinatario_erroneo = (respuesta['error'].present? && grupo.length == 1)
 
     if es_un_destinatario_erroneo
-      print "\r\n\nDestinatario erróneo (SendGrid dice: \"#{respuesta['error']}\"):\n#{grupo.first.inspect}\n\n"
+      Rails.logger.error p "Destinatario erróneo (SendGrid dice: \"#{respuesta['error']}\"):"
+      Rails.logger.error p "#{grupo.first.inspect}"
       return
     end
 
