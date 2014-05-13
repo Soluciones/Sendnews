@@ -93,7 +93,7 @@ private
 
     return if respuesta['error'].blank?
 
-    grupo.each_slice(grupo.length / 2) do |subgrupo|
+    grupo.each_slice((grupo.length + 1) / 2) do |subgrupo|
       llenar_lista_con_grupo(nombre_lista, subgrupo, sendgrid)
     end
   end
