@@ -54,6 +54,12 @@ module Sendnews::NewsletterSender
     opciones[:sendgrid].add_schedule(opciones[:nombre_newsletter], opciones_envio)
   end
 
+  def preparar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
+    sendgrid.add_list(nombre_lista)
+
+    llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
+  end
+
 private
 
   def formatear_destinatarios(destinatarios)
@@ -66,12 +72,6 @@ private
 
   def dame_nombre_lista_newsletter(nombre_newsletter)
     "Destinatarios #{nombre_newsletter}"
-  end
-
-  def preparar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
-    sendgrid.add_list(nombre_lista)
-
-    llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
   end
 
   def llenar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)
