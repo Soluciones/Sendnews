@@ -209,4 +209,28 @@ describe Sendnews::NewsletterSender do
       end
     end
   end
+
+  describe '#preparar_lista_destinatarios' do
+    context 'con una lista de 10 destinatarios' do
+      let(:destinatarios) { FactoryGirl.build_list(:suscripcion, 10) }
+
+      context 'cuando la llamada a la API devuelve error la primera vez' do
+        let(:sendgrid) { double('GatlingGun', add_list: generic_sucessful_response) }
+
+        it 'lo vuelve a intentar partiendo la lista en dos' do
+          sendgrid.should_receive(:add_emails).ordered do |_, destinatarios_enviados|
+            destinatarios_enviados.should have(10).items
+            generic_error_response
+          end
+
+          sendgrid.should_receive(:add_emails).twice.ordered do |_, destinatarios_enviados|
+            destinatarios_enviados.should have(5).items
+            generic_sucessful_response
+          end
+
+          subject.preparar_lista_destinatarios('nombre_cualquiera', destinatarios, sendgrid)
+        end
+      end
+    end
+  end
 end
