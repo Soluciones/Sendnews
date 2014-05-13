@@ -21,7 +21,7 @@ describe Sendnews::NewsletterSender do
   let(:nombre_newsletter) { Faker::Lorem.sentence }
   let(:nombre_lista) { Faker::Lorem.sentence }
   let(:destinatarios) { FactoryGirl.build_list(:suscripcion, Random.rand(5..10)) }
-  let(:generic_sucessful_response) { { message: 'success'} }
+  let(:generic_sucessful_response) { { message: 'success' } }
   let(:generic_error_response) { { 'error' => 'error message' } }
 
   before(:each) do
