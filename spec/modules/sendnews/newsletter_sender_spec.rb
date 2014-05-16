@@ -115,7 +115,7 @@ describe Sendnews::NewsletterSender do
     end
 
     it "crea una lista en SendGrid" do
-      SENDGRID_NEWSLETTERS.should_receive(:add_list).with(nombre_lista)
+      SENDGRID_NEWSLETTERS.should_receive(:add_list).with(nombre_lista).and_return(generic_sucessful_response)
 
       subject.enviar_newsletter_a_destinatarios(destinatarios, asunto, contenido, opciones)
     end
@@ -131,13 +131,27 @@ describe Sendnews::NewsletterSender do
     end
 
     it "finalmente llama a #enviar_newsletter_a_lista" do
-      subject.should_receive(:enviar_newsletter_a_lista).with(nombre_lista, asunto, contenido, opciones)
+      subject.should_receive(:enviar_newsletter_a_lista)
+             .with(nombre_lista, asunto, contenido, opciones)
+             .and_return(generic_sucessful_response)
 
       subject.enviar_newsletter_a_destinatarios(destinatarios, asunto, contenido, opciones)
     end
   end
 
   describe "#enviar_newsletter_a_lista" do
+    shared_examples_for 'devuelve false' do
+      it 'devuelve false' do
+        subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones).should be_false
+      end
+    end
+
+    shared_examples_for 'devuelve true' do
+      it 'devuelve true' do
+        subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones).should be_true
+      end
+    end
+
     context "si no se le pasa un nombre de newsletter" do
       it "genera uno" do
         subject.should_receive(:genera_nombre_newsletter).and_call_original
@@ -154,6 +168,7 @@ describe Sendnews::NewsletterSender do
                                 hash_including(identity: IDENTIDAD_REMITENTE_NEWSLETTERS,
                                                subject: asunto,
                                                html: contenido))
+                          .and_return(generic_sucessful_response)
 
       subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
     end
@@ -186,6 +201,7 @@ describe Sendnews::NewsletterSender do
         it "deja de intentarlo tras #{Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID} intentos" do
           SENDGRID_NEWSLETTERS.should_receive(:add_recipients)
                               .at_most(Sendnews::NewsletterSender::MAX_INTENTOS_API_SENDGRID).times
+                              .and_return(generic_error_response)
 
           subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
         end
@@ -200,6 +216,7 @@ describe Sendnews::NewsletterSender do
 
         SENDGRID_NEWSLETTERS.should_receive(:add_schedule)
                             .with(nombre_newsletter, hash_including(at: opciones[:momento_envio]))
+                            .and_return(generic_sucessful_response)
 
         subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
       end
@@ -211,7 +228,9 @@ describe Sendnews::NewsletterSender do
       it "programa la newsletter para ya" do
         subject.should_receive(:genera_nombre_newsletter).and_return(nombre_newsletter) # stub no funciona para métodos privados
 
-        SENDGRID_NEWSLETTERS.should_receive(:add_schedule).with(nombre_newsletter, {})
+        SENDGRID_NEWSLETTERS.should_receive(:add_schedule)
+                            .with(nombre_newsletter, {})
+                            .and_return(generic_sucessful_response)
 
         subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
       end
