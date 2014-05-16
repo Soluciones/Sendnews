@@ -235,6 +235,34 @@ describe Sendnews::NewsletterSender do
         subject.enviar_newsletter_a_lista(nombre_lista, asunto, contenido, opciones)
       end
     end
+
+    context 'si la request de .add_newsletter falla' do
+      before { SENDGRID_NEWSLETTERS.stub(add_newsletter: generic_error_response) }
+
+      it_behaves_like 'devuelve false'
+    end
+
+    context 'si la request de .add_recipients falla hasta el último inento' do
+      before { SENDGRID_NEWSLETTERS.stub(add_recipients: generic_error_response) }
+
+      it_behaves_like 'devuelve false'
+    end
+
+    context 'si la request de .add_schedule falla' do
+      before { SENDGRID_NEWSLETTERS.stub(add_schedule: generic_error_response) }
+
+      it_behaves_like 'devuelve false'
+    end
+
+    context 'si todas las requests han sido exitosas' do
+      before do
+        SENDGRID_NEWSLETTERS.stub(add_newsletter: generic_sucessful_response,
+                                  add_recipients: generic_sucessful_response,
+                                  add_schedule: generic_sucessful_response)
+      end
+
+      it_behaves_like 'devuelve true'
+    end
   end
 
   describe '#preparar_lista_destinatarios' do
