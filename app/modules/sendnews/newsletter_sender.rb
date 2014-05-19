@@ -42,16 +42,24 @@ module Sendnews::NewsletterSender
     opciones[:identidad] ||= IDENTIDAD_REMITENTE_NEWSLETTERS
     opciones[:nombre_newsletter] ||= genera_nombre_newsletter
 
-    opciones[:sendgrid].add_newsletter(opciones[:nombre_newsletter], identity: opciones[:identidad], subject: asunto, html: contenido)
+    respuesta = opciones[:sendgrid].add_newsletter(opciones[:nombre_newsletter],
+                                                   identity: opciones[:identidad],
+                                                   subject: asunto,
+                                                   html: contenido)
+    return false if respuesta['error'].present?
 
     MAX_INTENTOS_API_SENDGRID.times do
       respuesta = opciones[:sendgrid].add_recipients(opciones[:nombre_newsletter], nombre_lista)
       break if respuesta['error'].blank?
       sleep ESPERA_ENTRE_INTENTOS_API_SENDGRID
     end
+    return false if respuesta['error'].present?
 
     opciones_envio = opciones[:momento_envio] ? { at: opciones[:momento_envio] } : {}
-    opciones[:sendgrid].add_schedule(opciones[:nombre_newsletter], opciones_envio)
+    respuesta = opciones[:sendgrid].add_schedule(opciones[:nombre_newsletter], opciones_envio)
+    return false if respuesta['error'].present?
+
+    true
   end
 
   def preparar_lista_destinatarios(nombre_lista, destinatarios, sendgrid)

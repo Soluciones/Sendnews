@@ -1,3 +1,4 @@
+[3.0.0] NewsletterSender#enviar_newsletter_a_lista now returns false if some API requests fails
 [2.0.0] Renamed NewsletterSender#preparar_lista_para_newsletter to NewsletterSender#preparar_lista_destinatarios.
         Making NewsletterSender#preparar_lista_destinatarios public.
         Divide and conquer algorithm to make NewsletterSender#preparar_lista_destinatarios error proof.
