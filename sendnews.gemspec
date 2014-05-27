@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 3.2.18"
 
-  s.add_development_dependency 'mysql2'
+  s.add_development_dependency 'pg'
   s.add_dependency "actionmailer", "~> 3.2.18"
   s.add_dependency "actionpack", "~> 3.2.18"
   # s.add_dependency "activerecord", "~> 3.2.18"
