@@ -46,27 +46,18 @@ module Sendnews::NewsletterSender
                                                    identity: opciones[:identidad],
                                                    subject: asunto,
                                                    html: contenido)
-    if respuesta['error'].present?
-      log_sendgrid_error('.add_newsletter', respuesta['error'])
-      return false
-    end
+    return false if log_sendgrid_error('.add_newsletter', respuesta['error'])
 
     MAX_INTENTOS_API_SENDGRID.times do
       respuesta = opciones[:sendgrid].add_recipients(opciones[:nombre_newsletter], nombre_lista)
       break if respuesta['error'].blank?
       sleep ESPERA_ENTRE_INTENTOS_API_SENDGRID
     end
-    if respuesta['error'].present?
-      log_sendgrid_error('.add_recipients', respuesta['error'])
-      return false
-    end
+    return false if log_sendgrid_error('.add_recipients', respuesta['error'])
 
     opciones_envio = opciones[:momento_envio] ? { at: opciones[:momento_envio] } : {}
     respuesta = opciones[:sendgrid].add_schedule(opciones[:nombre_newsletter], opciones_envio)
-    if respuesta['error'].present?
-      log_sendgrid_error('.add_schedule', respuesta['error'])
-      return false
-    end
+    return false if log_sendgrid_error('.add_schedule', respuesta['error'])
 
     true
   end
@@ -116,6 +107,8 @@ private
   end
 
   def log_sendgrid_error(method, sendgrid_error)
+    return false if sendgrid_error.blank?
+
     Rails.logger.error p "Error en #{method} (SendGrid dice: \"#{sendgrid_error}\")"
   end
 end
