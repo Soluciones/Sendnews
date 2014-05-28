@@ -47,7 +47,7 @@ module Sendnews::NewsletterSender
                                                    subject: asunto,
                                                    html: contenido)
     if respuesta['error'].present?
-      Rails.logger.error p "Error en .add_newsletter (SendGrid dice: \"#{respuesta['error']}\")"
+      log_sendgrid_error('.add_newsletter', respuesta['error'])
       return false
     end
 
@@ -57,14 +57,14 @@ module Sendnews::NewsletterSender
       sleep ESPERA_ENTRE_INTENTOS_API_SENDGRID
     end
     if respuesta['error'].present?
-      Rails.logger.error p "Error en .add_recipients (SendGrid dice: \"#{respuesta['error']}\")"
+      log_sendgrid_error('.add_recipients', respuesta['error'])
       return false
     end
 
     opciones_envio = opciones[:momento_envio] ? { at: opciones[:momento_envio] } : {}
     respuesta = opciones[:sendgrid].add_schedule(opciones[:nombre_newsletter], opciones_envio)
     if respuesta['error'].present?
-      Rails.logger.error p "Error en .add_schedule (SendGrid dice: \"#{respuesta['error']}\")"
+      log_sendgrid_error('.add_schedule', respuesta['error'])
       return false
     end
 
@@ -113,5 +113,9 @@ private
     grupo.each_slice((grupo.length + 1) / 2) do |subgrupo|
       llenar_lista_con_grupo(nombre_lista, subgrupo, sendgrid)
     end
+  end
+
+  def log_sendgrid_error(method, sendgrid_error)
+    Rails.logger.error p "Error en #{method} (SendGrid dice: \"#{sendgrid_error}\")"
   end
 end
