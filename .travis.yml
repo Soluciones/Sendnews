@@ -1,4 +1,7 @@
 language: ruby
 cache: bundler
 rvm:
-  - "1.9.3"
+  - "2.1.2"
+before_script:
+  - mysql -e 'create database sendnews_dummy_test;'
+  - bundle exec rake db:migrate
