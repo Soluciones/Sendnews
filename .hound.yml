@@ -1,3 +1,11 @@
 LineLength:
   Description: 'Limit lines to 120 characters.'
   Max: 120
+  Exclude:
+    - app/views/**/*
+
+SignalException:
+  EnforcedStyle: only_raise
+
+DotPosition:
+  EnforcedStyle: leading
