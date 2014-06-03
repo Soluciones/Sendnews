@@ -16,16 +16,9 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "rails", "~> 3.2.18"
+  s.add_dependency "rails", "~> 4.0.4"
 
   s.add_development_dependency 'pg'
-  s.add_dependency "actionmailer", "~> 3.2.18"
-  s.add_dependency "actionpack", "~> 3.2.18"
-  # s.add_dependency "activerecord", "~> 3.2.18"
-  s.add_dependency "activeresource", "~> 3.2.18"
-  s.add_dependency "activesupport", "~> 3.2.18"
-  s.add_dependency "railties", "~> 3.2.18"
-  s.add_dependency "tzinfo"
 
   s.add_dependency "gatling_gun"
   # s.add_dependency "jquery-rails"
