@@ -1,0 +1,4 @@
+test:
+  adapter: postgresql
+  database: sendnews_dummy_test
+  username: postgres
