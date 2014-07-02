@@ -10,7 +10,7 @@ StringLiterals:
   EnforcedStyle: single_quotes
 
 HashSyntax:
-  EnforcedStyle: hash_rockets
+  EnforcedStyle: ruby19
 
 SignalException:
   EnforcedStyle: only_raise
