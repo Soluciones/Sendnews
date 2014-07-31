@@ -2,6 +2,9 @@ language: ruby
 cache: bundler
 rvm:
   - "2.1.2"
+addons:
+  postgresql: "9.3"
 before_script:
-  - mysql -e 'create database sendnews_dummy_test;'
+  - psql -c 'create database sendnews_dummy_test;' -U postgres
+  - cp test/dummy/config/database.yml.travis test/dummy/config/database.yml
   - bundle exec rake db:migrate
