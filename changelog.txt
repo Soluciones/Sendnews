@@ -1,3 +1,4 @@
+[7.0.0] Upgraded to Rails 4.1
 [6.0.0] Upgraded to Rails 4.0
 [5.0.0] Migrated to PostgreSQL
         Improving HoundCI
