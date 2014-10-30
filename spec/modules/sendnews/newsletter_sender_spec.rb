@@ -31,7 +31,7 @@ describe Sendnews::NewsletterSender do
     GatlingGun.any_instance.stub(add_newsletter: generic_sucessful_response)
     GatlingGun.any_instance.stub(add_recipients: generic_sucessful_response)
     GatlingGun.any_instance.stub(add_schedule: generic_sucessful_response)
-    GatlingGun.any_instance.stub(get_list: double('Response', success?: true))
+    GatlingGun.any_instance.stub(get_list: double('Response', error?: false))
 
     # Hacemos stub de NewsletterSender::ESPERA_ENTRE_INTENTOS_API_SENDGRID para evitar ralentizar el test
     stub_const('Sendnews::NewsletterSender::ESPERA_ENTRE_INTENTOS_API_SENDGRID', 0)
@@ -83,7 +83,7 @@ describe Sendnews::NewsletterSender do
     end
 
     context "cuando la lista de suscriptores al suscribible no existe en SendGrid" do
-      before { SENDGRID_NEWSLETTERS.stub(:get_list).with(nombre_lista).and_return(double('Response', success?: false)) }
+      before { SENDGRID_NEWSLETTERS.stub(:get_list).with(nombre_lista).and_return(double('Response', error?: true)) }
 
       it "prepara la lista" do
         subject.should_receive(:preparar_lista_destinatarios)
@@ -93,7 +93,7 @@ describe Sendnews::NewsletterSender do
     end
 
     context "cuando la lista de suscriptores al suscribible ya existe en SendGrid" do
-      before { SENDGRID_NEWSLETTERS.stub(:get_list).with(nombre_lista).and_return(double('Response', success?: true)) }
+      before { SENDGRID_NEWSLETTERS.stub(:get_list).with(nombre_lista).and_return(double('Response', error?: false)) }
 
       it "no prepara la lista" do
         subject.should_not_receive(:preparar_lista_destinatarios)

@@ -20,7 +20,7 @@ module Sendnews::NewsletterSender
     opciones[:sendgrid] ||= SENDGRID_NEWSLETTERS
     nombre_lista = suscribible.nombre_lista
 
-    lista_existe = opciones[:sendgrid].get_list(nombre_lista).success?
+    lista_existe = !opciones[:sendgrid].get_list(nombre_lista).error?
     unless lista_existe
       preparar_lista_destinatarios(nombre_lista, suscribible.suscripciones_activas, opciones[:sendgrid])
     end
