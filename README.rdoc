@@ -1,5 +1,0 @@
-= Sendnews
-
-{<img src="https://travis-ci.org/Soluciones/Sendnews.svg" alt="Build Status" />}[https://travis-ci.org/Soluciones/Sendnews]
-
-This project rocks and uses MIT-LICENSE.
